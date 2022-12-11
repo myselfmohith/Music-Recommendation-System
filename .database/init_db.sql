@@ -1,22 +1,55 @@
-create database music_recsys;
+CREATE DATABASE MUSIC_RECSYS;
 
-create table song_info(
-    song_index serial primary key,
-    song_id varchar(100) unique not null,
-    song_name varchar(255) not null,
-    spotify_id varchar(100) unique not null,
-    song_art text,
-    artist_names varchar(255) not null,
-    release_date Date,
-    danceability Numeric(8,6) default 0,
-    energy Numeric(8,6) default 0,
-    key Numeric(8,6) default 0,
-    loudness Numeric(8,6) default 0,
-    mode Numeric(8,6) default 0,
-    speechiness Numeric(8,6) default 0,
-    acousticness Numeric(8,6) default 0,
-    instrumentalness Numeric(8,6) default 0,
-    liveness Numeric(8,6) default 0,
-    valence Numeric(8,6) default 0,
-    tempo Numeric(8,6) default 0
+-- SONG METADATA TABLE
+CREATE TABLE SONG_INFO(
+    IDX INTEGER PRIMARY KEY AUTOINCREMENT,
+    SONG_ID VARCHAR(100) UNIQUE NOT NULL,
+    SONG_NAME VARCHAR(255) NOT NULL,
+    SPOTIFY_ID VARCHAR(100) UNIQUE NOT NULL,
+    SONG_ART TEXT,
+    ARTIST_NAMES TEXT NOT NULL,
+    RELEASE_DATE DATE,
+    DANCEABILITY DOUBLE DEFAULT 0,
+    ENERGY DOUBLE DEFAULT 0,
+    KEY DOUBLE DEFAULT 0,
+    LOUDNESS DOUBLE DEFAULT 0,
+    MODE DOUBLE DEFAULT 0,
+    SPEECHINESS DOUBLE DEFAULT 0,
+    ACOUSTICNESS DOUBLE DEFAULT 0,
+    INSTRUMENTALNESS DOUBLE DEFAULT 0,
+    LIVENESS DOUBLE DEFAULT 0,
+    VALENCE DOUBLE DEFAULT 0,
+    TEMPO DOUBLE DEFAULT 0,
+    EMBEDDINGS TEXT
 );
+
+
+-- USER METADATA TABLE
+CREATE TABLE USER_INFO(
+    IDX INTEGER PRIMARY KEY AUTOINCREMENT,
+    USERNAME VARCHAR(50) UNIQUE,
+    FIRST_NAME VARCHAR(50) NOT NULL,
+    LAST_NAME VARCHAR(50),
+    NEXT_GEN_REC DATE,
+    FAV_ARTISTS TEXT
+);
+
+-- USER SONG DATA
+CREATE TABLE USER_SONGS(
+    USR_IDX INTEGER REFERENCES USER_INFO(IDX) ON DELETE CASCADE,
+    SONG_IDX INTEGER REFERENCES SONG_INFO(IDX) ON DELETE CASCADE,
+    LAST_LISTNED_MS NUMERIC, 
+    PRIMARY KEY(USR_IDX,SONG_IDX)
+);
+
+--
+CREATE TABLE SONG_SONG_SIMS(
+    IDX_1 INTEGER REFERENCES SONG_INFO(IDX) ON DELETE CASCADE,
+    IDX_2 INTEGER REFERENCES SONG_INFO(IDX) ON DELETE CASCADE,
+    SIM NUMERIC(10,9) NOT NULL,
+    UNIQUE(IDX_1,IDX_2)
+);
+
+
+-- Sample Input
+INSERT INTO song_info (song_id,song_name,spotify_id,song_art,artist_names,release_date,danceability,energy,key,loudness,mode,speechiness,acousticness,instrumentalness,liveness,valence,tempo,embeddings) VALUES ('ABCFGGHJB','First Thing','1XtR5oQsad0JY5dJakjGOL','{}','Four Tet','2003-03-05',0.229000,0.011600,7.000000,-34.229000,1.000000,0.035800,0.940000,0.752000,0.049100,0.039100,80.441000,"1,2,3,4");
